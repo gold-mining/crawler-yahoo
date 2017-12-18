@@ -26,6 +26,7 @@ public class HoldersCrawler {
 		try {
 			this.document = Jsoup.connect("https://finance.yahoo.com/quote/" + ticker + "/holders").get();
 		} catch (IOException e) {
+			System.err.println(ticker);
 			e.printStackTrace();
 		}
 	}
@@ -37,17 +38,21 @@ public class HoldersCrawler {
 //	}
 
 	public MajorHolder getMajorHolder() {
-		MajorHolder majorHolder = new MajorHolder();
-		String majorHoldersXPath = "//*[@id=\"Col1-1-Holders-Proxy\"]/section/div[2]/div[2]/div/table/tbody";
-		Element majorHoldersSection = Xsoup.compile(majorHoldersXPath).evaluate(document).getElements().get(0);
-		
-		
-		majorHolder.Insider_Shares = Xsoup.compile("tbody/tr[1]/td[1]").evaluate(majorHoldersSection).getElements().get(0).text();
-		majorHolder.Institutions_Shares = Xsoup.compile("tbody/tr[2]/td[1]").evaluate(majorHoldersSection).getElements().get(0).text();
-		majorHolder.Institutions_Float = Xsoup.compile("tbody/tr[3]/td[1]").evaluate(majorHoldersSection).getElements().get(0).text();
-		majorHolder.Institutions_Number = Xsoup.compile("tbody/tr[4]/td[1]").evaluate(majorHoldersSection).getElements().get(0).text();
-		
-		return majorHolder;
+		try {
+			MajorHolder majorHolder = new MajorHolder();
+			String majorHoldersXPath = "//*[@id=\"Col1-1-Holders-Proxy\"]/section/div[2]/div[2]/div/table/tbody";
+			Element majorHoldersSection = Xsoup.compile(majorHoldersXPath).evaluate(document).getElements().get(0);
+			
+			
+			majorHolder.Insider_Shares = Xsoup.compile("tbody/tr[1]/td[1]").evaluate(majorHoldersSection).getElements().get(0).text();
+			majorHolder.Institutions_Shares = Xsoup.compile("tbody/tr[2]/td[1]").evaluate(majorHoldersSection).getElements().get(0).text();
+			majorHolder.Institutions_Float = Xsoup.compile("tbody/tr[3]/td[1]").evaluate(majorHoldersSection).getElements().get(0).text();
+			majorHolder.Institutions_Number = Xsoup.compile("tbody/tr[4]/td[1]").evaluate(majorHoldersSection).getElements().get(0).text();
+			
+			return majorHolder;
+		} catch (Exception e) {
+			return null;
+		}
 	}
 
 	public List<TopInstitutionalHolder> getTopInstitutionalHolder() {

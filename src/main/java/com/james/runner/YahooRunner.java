@@ -41,7 +41,8 @@ public class YahooRunner {
 	public void getDataMultiThread(String threadNumber, String stockList, String date, String output) {
 		try {
 			Queue<String> queue = getStockListFromFile(stockList);
-
+			Queue<String> finished = new LinkedList<String>();
+			
 			ExecutorService executor = Executors.newFixedThreadPool(Integer.parseInt(threadNumber));
 
 			while (!queue.isEmpty()) {
@@ -49,19 +50,22 @@ public class YahooRunner {
 					String stock;
 					String date;
 					String output;
+					Queue<String> finished;
 					public void run() {
 						YahooCrawler crawler = new YahooCrawler();
 						crawler.getData(output + "/" + date, stock);
+						finished.offer(stock);
+						System.err.print(finished.size() + " ");
 					}
 
-					private Runnable init(String stock, String date, String output) {
+					private Runnable init(String stock, String date, String output, Queue<String> finished) {
 						System.err.print(stock + " ");
 						this.stock = stock;
 						this.date = date;
 						this.output = output;
 						return this;
 					}
-				}.init(queue.poll(), date, output));
+				}.init(queue.poll(), date, output, finished));
 			}
 
 			executor.shutdown();

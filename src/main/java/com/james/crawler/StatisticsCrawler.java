@@ -23,7 +23,7 @@ public class StatisticsCrawler {
 			
 			return statistics;
 		} catch (IOException e) {
-			System.out.println(this.ticker);
+			System.out.println(ticker);
 			System.out.println(e.toString());
 			return null;
 		}

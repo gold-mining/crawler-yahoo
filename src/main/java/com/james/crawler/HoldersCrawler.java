@@ -16,6 +16,8 @@ import com.james.modal.TopMutualFundHolder;
 import us.codecraft.xsoup.Xsoup;
 
 public class HoldersCrawler {
+	
+	private String ticker;
 		
 	private Document document;
 	
@@ -24,6 +26,7 @@ public class HoldersCrawler {
 	
 	public HoldersCrawler(String ticker) {
 		try {
+			this.ticker = ticker;
 			this.document = Jsoup.connect("https://finance.yahoo.com/quote/" + ticker + "/holders").get();
 		} catch (IOException e) {
 			System.out.println(this.ticker);

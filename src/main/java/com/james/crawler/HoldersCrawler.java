@@ -26,8 +26,8 @@ public class HoldersCrawler {
 		try {
 			this.document = Jsoup.connect("https://finance.yahoo.com/quote/" + ticker + "/holders").get();
 		} catch (IOException e) {
-			System.err.println(ticker);
-			e.printStackTrace();
+			System.out.println(this.ticker);
+			System.out.println(e.toString());
 		}
 	}
 	
@@ -51,6 +51,8 @@ public class HoldersCrawler {
 			
 			return majorHolder;
 		} catch (Exception e) {
+			System.out.println(this.ticker);
+			System.out.println(e.toString());
 			return null;
 		}
 	}

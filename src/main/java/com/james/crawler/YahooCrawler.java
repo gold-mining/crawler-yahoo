@@ -25,8 +25,8 @@ public class YahooCrawler {
 			outputToFile(statistics, majorHolder, institutionalHolders, mutualFundHolders, filePath, ticker);
 			// outputToConsole(statistics, majorHolder, institutionalHolders, mutualFundHolders, ticker);
 		} catch (Exception e) {
-			System.err.println(ticker);
-			e.printStackTrace();
+			System.out.println(this.ticker);
+			System.out.println(e.toString());
 		}
 	}
 	

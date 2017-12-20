@@ -55,6 +55,7 @@ public class YahooRunner {
 					}
 
 					private Runnable init(String stock, String date, String output) {
+						System.err.print(stock + " ");
 						this.stock = stock;
 						this.date = date;
 						this.output = output;

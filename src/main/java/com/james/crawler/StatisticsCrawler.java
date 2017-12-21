@@ -1,8 +1,5 @@
 package com.james.crawler;
 
-import java.io.IOException;
-
-import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 
@@ -12,18 +9,17 @@ import us.codecraft.xsoup.Xsoup;
 
 public class StatisticsCrawler {
 		
-	public Statistics getStatistics(String ticker) {
+	public Statistics getStatistics(Document document, String ticker) {
 		try {
-			Document document = Jsoup.connect("https://finance.yahoo.com/quote/" + ticker + "/key-statistics").get();
-			
 			Statistics statistics = new Statistics();
+			
 			getValuationMeasures(document, statistics);
 			getFinancialHighlights(document, statistics);
 			getTradingInformation(document, statistics);
 			
 			return statistics;
-		} catch (IOException e) {
-			System.out.println(ticker);
+		} catch (Exception e) {
+			System.out.println("found a problem when get statistic information for " + ticker);
 			System.out.println(e.toString());
 			return null;
 		}

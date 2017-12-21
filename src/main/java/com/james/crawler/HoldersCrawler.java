@@ -1,10 +1,8 @@
 package com.james.crawler;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
@@ -17,30 +15,7 @@ import us.codecraft.xsoup.Xsoup;
 
 public class HoldersCrawler {
 	
-	private String ticker;
-		
-	private Document document;
-	
-	public HoldersCrawler() {
-	}
-	
-	public HoldersCrawler(String ticker) {
-		try {
-			this.ticker = ticker;
-			this.document = Jsoup.connect("https://finance.yahoo.com/quote/" + ticker + "/holders").get();
-		} catch (IOException e) {
-			System.out.println(this.ticker);
-			System.out.println(e.toString());
-		}
-	}
-	
-//	public void getStatistics(String ticker) {
-//			MajorHolder majorHolder = getMajorHolder();
-//			List<TopInstitutionalHolder> institutionalHolder = getTopInstitutionalHolder();
-//			List<TopMutualFundHolder> mutualFundHolder = getTopMutualFundHolder();
-//	}
-
-	public MajorHolder getMajorHolder() {
+	public MajorHolder getMajorHolder(Document document, String ticker) {
 		try {
 			MajorHolder majorHolder = new MajorHolder();
 			String majorHoldersXPath = "//*[@id=\"Col1-1-Holders-Proxy\"]/section/div[2]/div[2]/div/table/tbody";
@@ -54,47 +29,59 @@ public class HoldersCrawler {
 			
 			return majorHolder;
 		} catch (Exception e) {
-			System.out.println(this.ticker);
+			System.out.println("cannot find major holder for " + ticker);
 			System.out.println(e.toString());
 			return null;
 		}
 	}
 
-	public List<TopInstitutionalHolder> getTopInstitutionalHolder() {
-		List<TopInstitutionalHolder> institutionalHolders = new ArrayList<TopInstitutionalHolder>();
-		String institutionalHoldersXPath = "//*[@id=\"Col1-1-Holders-Proxy\"]/section/div[2]/div[3]/table/tbody/tr";
-		Elements institutionalHoldersSection = Xsoup.compile(institutionalHoldersXPath).evaluate(document).getElements();
-		
-		for(int i = 0; i < institutionalHoldersSection.size(); i++) {
-			TopInstitutionalHolder institutionalHolder = new TopInstitutionalHolder();
-			 institutionalHolder.Holder = Xsoup.compile("tr/td[1]").evaluate(institutionalHoldersSection.get(i)).getElements().get(0).text();
-			 institutionalHolder.Shares = Xsoup.compile("tr/td[2]").evaluate(institutionalHoldersSection.get(i)).getElements().get(0).text();
-			 institutionalHolder.Date_Reported = Xsoup.compile("tr/td[3]").evaluate(institutionalHoldersSection.get(i)).getElements().get(0).text();
-			 institutionalHolder.Percentage = Xsoup.compile("tr/td[4]").evaluate(institutionalHoldersSection.get(i)).getElements().get(0).text();
-			 institutionalHolder.Value = Xsoup.compile("tr/td[5]").evaluate(institutionalHoldersSection.get(i)).getElements().get(0).text();
-			 institutionalHolders.add(institutionalHolder);
+	public List<TopInstitutionalHolder> getTopInstitutionalHolder(Document document, String ticker) {
+		try {
+			List<TopInstitutionalHolder> institutionalHolders = new ArrayList<TopInstitutionalHolder>();
+			String institutionalHoldersXPath = "//*[@id=\"Col1-1-Holders-Proxy\"]/section/div[2]/div[3]/table/tbody/tr";
+			Elements institutionalHoldersSection = Xsoup.compile(institutionalHoldersXPath).evaluate(document).getElements();
+			
+			for(int i = 0; i < institutionalHoldersSection.size(); i++) {
+				TopInstitutionalHolder institutionalHolder = new TopInstitutionalHolder();
+				 institutionalHolder.Holder = Xsoup.compile("tr/td[1]").evaluate(institutionalHoldersSection.get(i)).getElements().get(0).text();
+				 institutionalHolder.Shares = Xsoup.compile("tr/td[2]").evaluate(institutionalHoldersSection.get(i)).getElements().get(0).text();
+				 institutionalHolder.Date_Reported = Xsoup.compile("tr/td[3]").evaluate(institutionalHoldersSection.get(i)).getElements().get(0).text();
+				 institutionalHolder.Percentage = Xsoup.compile("tr/td[4]").evaluate(institutionalHoldersSection.get(i)).getElements().get(0).text();
+				 institutionalHolder.Value = Xsoup.compile("tr/td[5]").evaluate(institutionalHoldersSection.get(i)).getElements().get(0).text();
+				 institutionalHolders.add(institutionalHolder);
+			}
+			
+			return institutionalHolders;
+		} catch (Exception e) {
+			System.out.println("cannot find top institutional fund for " + ticker);
+			System.out.println(e.toString());
+			return null;
 		}
-		
-		return institutionalHolders;
 	}
 
-	public List<TopMutualFundHolder> getTopMutualFundHolder() {
-		List<TopMutualFundHolder> mutualFundHolders = new ArrayList<TopMutualFundHolder>();
-		
-		String institutionalHoldersXPath = "//*[@id=\"Col1-1-Holders-Proxy\"]/section/div[2]/div[4]/table/tbody/tr";
-		Elements institutionalHoldersSection = Xsoup.compile(institutionalHoldersXPath).evaluate(document).getElements();
-		
-		for(int i = 0; i < institutionalHoldersSection.size(); i++) {
-			TopMutualFundHolder mutualFundHolder = new TopMutualFundHolder();
-			mutualFundHolder.Holder = Xsoup.compile("tr/td[1]").evaluate(institutionalHoldersSection.get(i)).getElements().get(0).text();
-			mutualFundHolder.Shares = Xsoup.compile("tr/td[2]").evaluate(institutionalHoldersSection.get(i)).getElements().get(0).text();
-			mutualFundHolder.Date_Reported = Xsoup.compile("tr/td[3]").evaluate(institutionalHoldersSection.get(i)).getElements().get(0).text();
-			mutualFundHolder.Percentage = Xsoup.compile("tr/td[4]").evaluate(institutionalHoldersSection.get(i)).getElements().get(0).text();
-			mutualFundHolder.Value = Xsoup.compile("tr/td[5]").evaluate(institutionalHoldersSection.get(i)).getElements().get(0).text();
-			mutualFundHolders.add(mutualFundHolder);
+	public List<TopMutualFundHolder> getTopMutualFundHolder(Document document, String ticker) {
+		try {
+			List<TopMutualFundHolder> mutualFundHolders = new ArrayList<TopMutualFundHolder>();
+			
+			String institutionalHoldersXPath = "//*[@id=\"Col1-1-Holders-Proxy\"]/section/div[2]/div[4]/table/tbody/tr";
+			Elements institutionalHoldersSection = Xsoup.compile(institutionalHoldersXPath).evaluate(document).getElements();
+			
+			for(int i = 0; i < institutionalHoldersSection.size(); i++) {
+				TopMutualFundHolder mutualFundHolder = new TopMutualFundHolder();
+				mutualFundHolder.Holder = Xsoup.compile("tr/td[1]").evaluate(institutionalHoldersSection.get(i)).getElements().get(0).text();
+				mutualFundHolder.Shares = Xsoup.compile("tr/td[2]").evaluate(institutionalHoldersSection.get(i)).getElements().get(0).text();
+				mutualFundHolder.Date_Reported = Xsoup.compile("tr/td[3]").evaluate(institutionalHoldersSection.get(i)).getElements().get(0).text();
+				mutualFundHolder.Percentage = Xsoup.compile("tr/td[4]").evaluate(institutionalHoldersSection.get(i)).getElements().get(0).text();
+				mutualFundHolder.Value = Xsoup.compile("tr/td[5]").evaluate(institutionalHoldersSection.get(i)).getElements().get(0).text();
+				mutualFundHolders.add(mutualFundHolder);
+			}
+			
+			return mutualFundHolders;
+		} catch (Exception e) {
+			System.out.println("cannot find top mutual fund for " + ticker);
+			System.out.println(e.toString());
+			return null;
 		}
-		
-		return mutualFundHolders;
 	}
 
 }
